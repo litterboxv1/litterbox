@@ -17,8 +17,9 @@
     
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); }
     h1, h2, h3 { margin: 0; }
+    a { text-decoration: none; color: inherit; }
 
-    /* New Global Header - Aligned to grid */
+    /* Global Header */
     .global-header {
       position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 100;
       height: 60px; border-bottom: 1px solid var(--border); box-sizing: border-box;
@@ -38,17 +39,32 @@
     .search-bar { width: 100%; background: #202327; border: 1px solid transparent; padding: 10px 20px; border-radius: 9999px; color: var(--text); font-size: 15px; outline: none; transition: background 0.2s, border 0.2s; }
     .search-bar:focus { background: transparent; border: 1px solid var(--primary); }
     
-    /* Center the 2-Column Layout */
+    /* Layout */
     .container { display: flex; justify-content: center; max-width: 1050px; margin: 0 auto; }
-    
-    /* Main Feed Column */
     main { width: 600px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); min-height: 100vh; }
 
-    /* Write Review Trigger */
+    /* Home View Elements */
     .write-review-trigger { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; cursor: pointer; transition: background 0.2s; }
     .write-review-trigger:hover { background: var(--bg-hover); }
     .write-input-mock { font-size: 1.2rem; color: var(--text-light); }
     .post-btn-small { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 9999px; font-weight: bold; cursor: pointer; }
+
+    /* Movie View Elements (TMDB Details) */
+    .movie-header-card { background: #1a1d1f; padding: 24px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); }
+    .movie-poster { width: 140px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
+    .movie-info { flex-grow: 1; }
+    .movie-title { font-size: 1.6rem; font-weight: bold; margin-bottom: 4px; }
+    .movie-year { font-weight: normal; color: var(--text-light); }
+    .movie-meta { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+    .movie-rating-row { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+    .movie-tagline { font-style: italic; color: #aaa; font-size: 0.95rem; margin-bottom: 8px; }
+    .movie-overview-title { font-weight: bold; margin-bottom: 4px; font-size: 1rem; }
+    .movie-overview { font-size: 0.9rem; line-height: 1.4; color: #ccc; margin-bottom: 16px; }
+    .movie-crew-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 0.85rem; }
+    .crew-name { font-weight: bold; color: var(--text); }
+    .crew-job { color: #888; }
+    
+    .reviews-section-title { background: white; color: black; font-size: 2rem; font-weight: bold; padding: 12px 24px; border-bottom: 1px solid var(--border); }
 
     /* Feed Posts */
     .post { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; transition: background 0.2s; cursor: pointer; }
@@ -63,67 +79,41 @@
     .stars-inline { color: #ffd700; font-size: 1.1em;}
     .post-text { font-size: 15px; line-height: 1.4; color: var(--text); white-space: pre-wrap; word-break: break-word;}
 
-    /* Right Sidebar (Pinned & Stretching) */
-    aside { 
-      width: 350px; 
-      padding-left: 30px; 
-      padding-top: 20px; 
-      position: sticky; 
-      top: 60px; 
-      height: calc(100vh - 60px); 
-      box-sizing: border-box; 
-      display: flex; 
-      flex-direction: column; 
-      padding-bottom: 20px; 
-    }
-    
+    /* Sidebar */
+    aside { width: 350px; padding-left: 30px; padding-top: 20px; position: sticky; top: 60px; height: calc(100vh - 60px); box-sizing: border-box; display: flex; flex-direction: column; padding-bottom: 20px; }
     .sidebar-section { background: var(--sidebar-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
     .sidebar-section h3 { margin: 0 0 16px 0; font-size: 1.2rem; font-weight: 800; }
-    
-    /* Stretches the Leaderboard block */
-    .leaderboard-section {
-      flex-grow: 1; 
-      margin-bottom: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
+    .leaderboard-section { flex-grow: 1; margin-bottom: 0; display: flex; flex-direction: column; }
     .posters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .poster-placeholder { aspect-ratio: 2/3; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; text-align: center; }
-
-    /* Updated Leaderboard Tabs */
     .leaderboard-tabs { display: flex; gap: 16px; margin-bottom: 16px; font-size: 0.95em; border-bottom: 1px solid var(--border); }
     .leaderboard-tabs span { font-weight: bold; color: var(--text-light); cursor: pointer; padding-bottom: 12px; position: relative; }
     .leaderboard-tabs .active { color: var(--text); }
     .leaderboard-tabs .active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--primary); border-radius: 2px; }
-    
     .leaderboard-item { display: flex; gap: 12px; margin-bottom: 16px; }
-    .leaderboard-item:last-child { margin-bottom: 0; }
 
-    /* Dark Mode Modal */
+    /* Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 112, 131, 0.4); z-index: 200; justify-content: center; align-items: flex-start; padding-top: 50px; }
     .modal-content { background: var(--bg); width: 100%; max-width: 600px; padding: 16px; border-radius: 16px; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .modal-close { font-size: 1.5rem; cursor: pointer; color: var(--text); background: none; border: none; }
-    
     #new-movie-select { background: #202327; color: var(--text); border: none; padding: 14px; border-radius: 8px; width: 100%; font-size: 1rem; margin-bottom: 16px; outline: none; box-sizing: border-box;}
     #input-new { background: var(--bg); color: var(--text); border: none; width: 100%; height: 120px; font-size: 1.2rem; resize: none; outline: none; margin-bottom: 16px; box-sizing: border-box;}
     .modal-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; }
     .btn-large { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 9999px; font-weight: bold; font-size: 1rem; cursor: pointer; }
-    
     #debug { background: #fee; color: #c00; padding: 10px; display: none; text-align: center;}
   </style>
 </head>
 <body>
 
   <header class="global-header">
-    <div class="header-logo">💩</div>
+    <div class="header-logo">💩 MovieApp</div>
     <div class="header-container">
       <div class="header-main-col">
         <nav class="header-tabs-center">
-          <div class="header-tab active">Home</div>
-          <div class="header-tab">Movies</div>
-          <div class="header-tab">Profile</div>
+          <a href="index.html" class="header-tab" id="nav-home">Home</a>
+          <a href="?movie=920530" class="header-tab" id="nav-movies">Movies</a>
+          <a href="#" class="header-tab">Profile</a>
         </nav>
       </div>
       <div class="header-side-col">
@@ -136,15 +126,24 @@
 
   <div class="container">
     <main>
-      <div class="write-review-trigger" onclick="openModal()">
-        <div class="avatar"></div>
-        <div style="flex-grow: 1; display: flex; justify-content: space-between; align-items: center;">
-          <div class="write-input-mock" style="margin: 0;">Post a Review</div>
-          <button class="post-btn-small">Post</button>
+      
+      <div id="view-home">
+        <div class="write-review-trigger" onclick="openModal()">
+          <div class="avatar"></div>
+          <div style="flex-grow: 1; display: flex; justify-content: space-between; align-items: center;">
+            <div class="write-input-mock" style="margin: 0;">Post a Review</div>
+            <button class="post-btn-small">Post</button>
+          </div>
         </div>
+        <div id="home-feed-container"></div>
       </div>
 
-      <div id="movies"></div>
+      <div id="view-movie" style="display: none;">
+        <div id="movie-header-container"></div>
+        <div class="reviews-section-title">Reviews</div>
+        <div id="movie-reviews-container"></div>
+      </div>
+
     </main>
 
     <aside>
@@ -163,7 +162,6 @@
           <span class="active">Absolute Cinema</span>
           <span>Absolute shitpost</span>
         </div>
-        
         <div class="leaderboard-item">
           <div class="avatar" style="width: 32px; height: 32px;"></div>
           <div style="font-size: 0.85em;">
@@ -190,16 +188,11 @@
         <button class="modal-close" onclick="closeModal()">×</button>
         <button id="post-btn-new" class="btn-large" onclick="addReview()">Post</button>
       </div>
-      
       <div style="display: flex; gap: 12px;">
         <div class="avatar"></div>
         <div style="flex-grow: 1;">
-          <select id="new-movie-select">
-              <option value="" disabled selected>Select a movie...</option>
-              </select>
-          
+          <select id="new-movie-select"><option value="" disabled selected>Select a movie...</option></select>
           <textarea id="input-new" maxlength="140" placeholder="Write your review here..."></textarea>
-          
           <div class="modal-footer">
             <div id="star-rating-new" data-rating="0" style="display: flex; font-size: 1.8em; cursor: pointer; user-select: none;">
                 <span id="star-new-1" onclick="setRating('new', 1)" style="color: #2f3336;">☆</span>
@@ -215,6 +208,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=22"></script>
+  <script src="app.js?v=23"></script>
 </body>
 </html>
