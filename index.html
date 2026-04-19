@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Movie App Prototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     /* X (Twitter) Dark Mode Color Palette */
     :root {
@@ -15,7 +15,7 @@
       --sidebar-bg: #16181c;
     }
     
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
     h1, h2, h3 { margin: 0; }
     a { text-decoration: none; color: inherit; }
 
@@ -49,21 +49,16 @@
     .write-input-mock { font-size: 1.2rem; color: var(--text-light); }
     .post-btn-small { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 9999px; font-weight: bold; cursor: pointer; }
 
-    /* Movie View Elements (TMDB Details) */
+    /* Movie View Elements */
     .movie-header-card { background: #1a1d1f; padding: 24px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); }
-    .movie-poster { width: 250px; height: 375px; flex-shrink: 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
+    .movie-poster { width: 180px; aspect-ratio: 2/3; flex-shrink: 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
     .movie-info { flex-grow: 1; }
     .movie-title { font-size: 1.6rem; font-weight: bold; margin-bottom: 4px; }
-    .movie-year { font-weight: normal; color: var(--text-light); }
     .movie-meta { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
     .movie-rating-row { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
     .movie-tagline { font-style: italic; color: #aaa; font-size: 0.95rem; margin-bottom: 8px; }
     .movie-overview-title { font-weight: bold; margin-bottom: 4px; font-size: 1rem; }
     .movie-overview { font-size: 0.9rem; line-height: 1.4; color: #ccc; margin-bottom: 16px; }
-    .movie-crew-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 0.85rem; }
-    .crew-name { font-weight: bold; color: var(--text); }
-    .crew-job { color: #888; }
-    
     .reviews-section-title { background: transparent; color: var(--text); font-size: 1.4rem; font-weight: 800; padding: 16px 24px; border-bottom: 1px solid var(--border); }
 
     /* Feed Posts */
@@ -102,6 +97,38 @@
     .modal-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; }
     .btn-large { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 9999px; font-weight: bold; font-size: 1rem; cursor: pointer; }
     #debug { background: #fee; color: #c00; padding: 10px; display: none; text-align: center;}
+
+    /* --- MOBILE RESPONSIVE RULES --- */
+    .mobile-bottom-nav { display: none; }
+    
+    @media (max-width: 768px) {
+      .global-header { padding: 0 16px; justify-content: center; }
+      .header-logo, .header-main-col { display: none; }
+      .header-container { width: 100%; justify-content: center; }
+      .header-side-col { width: 100%; padding-left: 0; }
+      
+      .container { flex-direction: column; padding-bottom: 80px; margin: 0; } 
+      main { width: 100%; border: none; }
+      
+      .movie-header-card { flex-direction: column; align-items: center; text-align: center; padding: 16px; }
+      .movie-rating-row { justify-content: center; }
+      
+      /* Hide sidebar on mobile by default */
+      aside { display: none; width: 100%; padding: 0; height: auto; position: static; }
+      .sidebar-section { border-radius: 0; border-left: none; border-right: none; margin-bottom: 8px; }
+      
+      /* Bottom Nav */
+      .mobile-bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(0,0,0,0.95); backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border); z-index: 100;
+        justify-content: space-around; padding: 12px 0;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+      .bottom-tab { color: var(--text-light); font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+      .bottom-tab.active { color: var(--text); }
+      .bottom-tab-icon { font-size: 1.3rem; }
+    }
   </style>
 </head>
 <body>
@@ -126,7 +153,6 @@
 
   <div class="container">
     <main>
-      
       <div id="view-home">
         <div class="write-review-trigger" onclick="openModal()">
           <div class="avatar"></div>
@@ -143,11 +169,10 @@
         <div class="reviews-section-title">Reviews</div>
         <div id="movie-reviews-container"></div>
       </div>
-
     </main>
 
     <aside>
-      <div class="sidebar-section">
+      <div id="mobile-watched-section" class="sidebar-section">
         <h3>Recently Watched</h3>
         <div class="posters-grid">
           <div class="poster-placeholder" style="background: #8b0000;">Dune 2</div>
@@ -156,7 +181,7 @@
         </div>
       </div>
 
-      <div class="sidebar-section leaderboard-section">
+      <div id="mobile-leaderboard-section" class="sidebar-section leaderboard-section">
         <h3>Leaderboard</h3>
         <div class="leaderboard-tabs">
           <span class="active">Absolute Cinema</span>
@@ -181,6 +206,29 @@
       </div>
     </aside>
   </div>
+
+  <nav class="mobile-bottom-nav">
+    <div class="bottom-tab active" onclick="window.location.href='index.html'">
+       <span class="bottom-tab-icon">🏠</span>
+       <span>Home</span>
+    </div>
+    <div class="bottom-tab" onclick="window.location.href='?movie=920530'">
+       <span class="bottom-tab-icon">🎬</span>
+       <span>Movies</span>
+    </div>
+    <div class="bottom-tab" onclick="switchMobileTab('watched', this)">
+       <span class="bottom-tab-icon">👀</span>
+       <span>Watched</span>
+    </div>
+    <div class="bottom-tab" onclick="switchMobileTab('leaderboard', this)">
+       <span class="bottom-tab-icon">🏆</span>
+       <span>Leaders</span>
+    </div>
+    <div class="bottom-tab" onclick="switchMobileTab('profile', this)">
+       <span class="bottom-tab-icon">👤</span>
+       <span>Profile</span>
+    </div>
+  </nav>
 
   <div class="modal-overlay" id="review-modal">
     <div class="modal-content">
@@ -208,6 +256,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=23"></script>
+  <script src="app.js?v=27"></script>
 </body>
 </html>
