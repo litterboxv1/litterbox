@@ -123,7 +123,7 @@ try {
                   <div class="movie-meta">${releaseYear} • ${runtime}</div>
                   
                   <div class="movie-rating-row">
-                     <span style="color: #ffd700; font-size: 0.95rem;">${avgRating} Stars </span> 
+                     <span style="color: #ffd700; font-size: 0.95rem;">Rated ${avgRating}</span> 
                      <span style="font-weight: normal; font-size: 0.95rem;">across ${reviewCount} Reviews</span>
                   </div>
                   
