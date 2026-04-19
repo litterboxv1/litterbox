@@ -1,8 +1,17 @@
+alert("JS loaded");
+
 const SUPABASE_URL = "https://wdkrylqauvlahvbdzfh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Q6Rlx_PBj0yf-6fTyBGj6g_dZc-MfzQ";
 
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+// SAFE INIT
+
+const supabaseClient = window.supabase.createClient(
+
+  SUPABASE_URL,
+
+  SUPABASE_KEY
+
+);
 
 const API_KEY = "978a4bc3138be0d1caacc278f7b6acfe";
 
