@@ -39,13 +39,12 @@ try {
         let reviewsHTML = "";
         if (movieReviews.length > 0) {
             movieReviews.forEach(r => {
-                // Generate the visual stars based on the saved number, default to 1 if it's an old test review
-                const starCount = r.rating ? r.rating : 1; 
-                const starsVisual = '⭐'.repeat(starCount);
+                const starCount = r.rating ? r.rating : 0; 
+                const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
 
                 reviewsHTML += `
                 <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin: 10px 0;">
-                  <div style="font-size: 1.1em; margin-bottom: 4px;">${starsVisual}</div>
+                  <div style="font-size: 1.1em; margin-bottom: 4px; color: #1da1f2;">${starsVisual}</div>
                   <div style="color: #333;">💬 ${r.content}</div>
                 </div>`;
             });
@@ -53,20 +52,24 @@ try {
             reviewsHTML = `<em>No reviews yet. Be the first!</em>`;
         }
 
-        // Added the rating dropdown to the input area
+        // Replaced the dropdown with the tap-based star container
         div.innerHTML = `
           <h3 style="margin-top: 0;">${movie.title}</h3>
-          <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-              <select id="rating-${movie.id}" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; background: white;">
-                  <option value="5">⭐⭐⭐⭐⭐</option>
-                  <option value="4">⭐⭐⭐⭐</option>
-                  <option value="3">⭐⭐⭐</option>
-                  <option value="2">⭐⭐</option>
-                  <option value="1">⭐</option>
-              </select>
-              <input id="input-${movie.id}" placeholder="Write a review..." style="flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 6px;" />
-              <button onclick="addReview(${movie.id})" style="padding: 8px 16px; background: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold;">Post</button>
+          
+          <div style="display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;">
+              
+              <div id="star-rating-${movie.id}" data-rating="0" style="display: flex; font-size: 1.8em; cursor: pointer; user-select: none;">
+                  <span id="star-${movie.id}-1" onclick="setRating(${movie.id}, 1)" style="color: #ccc;">☆</span>
+                  <span id="star-${movie.id}-2" onclick="setRating(${movie.id}, 2)" style="color: #ccc;">☆</span>
+                  <span id="star-${movie.id}-3" onclick="setRating(${movie.id}, 3)" style="color: #ccc;">☆</span>
+                  <span id="star-${movie.id}-4" onclick="setRating(${movie.id}, 4)" style="color: #ccc;">☆</span>
+                  <span id="star-${movie.id}-5" onclick="setRating(${movie.id}, 5)" style="color: #ccc;">☆</span>
+              </div>
+
+              <input id="input-${movie.id}" placeholder="Write a review..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+              <button onclick="addReview(${movie.id})" style="padding: 10px 18px; background: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold;">Post</button>
           </div>
+
           <div id="reviews-${movie.id}" style="font-size: 0.9em;">
              ${reviewsHTML}
           </div>
@@ -81,21 +84,44 @@ try {
 
   initializeFeed();
 
+  // New Global Function: Handles the tapping of stars
+  window.setRating = function(movieId, clickedRating) {
+    // Save the number to the hidden data attribute
+    const container = document.getElementById(`star-rating-${movieId}`);
+    container.setAttribute("data-rating", clickedRating);
+
+    // Visually fill in the correct number of stars
+    for (let i = 1; i <= 5; i++) {
+        const star = document.getElementById(`star-${movieId}-${i}`);
+        if (i <= clickedRating) {
+            star.innerText = "★";
+            star.style.color = "#1da1f2"; // Highlight color
+        } else {
+            star.innerText = "☆";
+            star.style.color = "#ccc"; // Empty color
+        }
+    }
+  };
+
   window.addReview = async function(movieId) {
     try {
       const input = document.getElementById(`input-${movieId}`);
       const text = input.value;
       
-      // Grab the star value from the dropdown
-      const ratingDropdown = document.getElementById(`rating-${movieId}`);
-      const ratingValue = parseInt(ratingDropdown.value);
+      // Grab the star value from the hidden attribute
+      const ratingContainer = document.getElementById(`star-rating-${movieId}`);
+      const ratingValue = parseInt(ratingContainer.getAttribute("data-rating"));
 
-      if (!text.trim()) {
-        alert("Please write something first!");
+      if (ratingValue === 0) {
+        alert("Please tap the stars to leave a rating!");
         return;
       }
 
-      // Tell Supabase to save the rating number too
+      if (!text.trim()) {
+        alert("Please write a review!");
+        return;
+      }
+
       const { error } = await supabaseClient
         .from("reviews")
         .insert([{ movie_id: movieId, content: text, rating: ratingValue }]);
