@@ -1,7 +1,8 @@
 const SUPABASE_URL = "https://wdkrylqauvlahvbdzfh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Q6Rlx_PBj0yf-6fTyBGj6g_dZc-MfzQ";
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const API_KEY = "978a4bc3138be0d1caacc278f7b6acfe";
 
@@ -29,19 +30,21 @@ fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`)
 
 // Add review
 async function addReview(movieId) {
+  alert("Button clicked");
+
   const input = document.getElementById(`input-${movieId}`);
   const text = input.value;
 
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("reviews")
     .insert([{ movie_id: movieId, content: text }]);
 
   if (error) {
-    alert("Error: " + error.message);
-    return;
+    alert("ERROR: " + error.message);
+  } else {
+    alert("SUCCESS");
   }
 
-  input.value = "";
   loadReviews(movieId);
 }
 
