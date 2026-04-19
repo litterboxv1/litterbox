@@ -32,11 +32,18 @@ async function addReview(movieId) {
   const input = document.getElementById(`input-${movieId}`);
   const text = input.value;
 
-  if (!text) return;
-  if (text.length > 140) {
-    alert("Max 140 characters!");
+  const { error } = await supabaseClient
+    .from("reviews")
+    .insert([{ movie_id: movieId, content: text }]);
+
+  if (error) {
+    alert("Error: " + error.message);
     return;
   }
+
+  input.value = "";
+  loadReviews(movieId);
+}
 
   await supabaseClient.from("reviews").insert([
     { movie_id: movieId, content: text }
