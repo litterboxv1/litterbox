@@ -109,19 +109,18 @@ try {
         // Render Top Header
         const headerContainer = document.getElementById("movie-header-container");
         const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : "N/A";
-        const runtime = `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`;
-        const genres = movie.genres.map(g => g.name).join(" and ");
+        const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "N/A";
         
         // Grab Director safely
-        const directorObj = movie.credits.crew.find(c => c.job === 'Director');
+        const directorObj = movie.credits && movie.credits.crew ? movie.credits.crew.find(c => c.job === 'Director') : null;
         const directorName = directorObj ? directorObj.name : "Unknown";
 
         headerContainer.innerHTML = `
             <div class="movie-header-card">
                <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" class="movie-poster">
                <div class="movie-info">
-                  <div class="movie-title">${movie.title} <span class="movie-year">(${releaseYear})</span></div>
-                  <div class="movie-meta">U/A 13+ | ${movie.release_date} • ${genres} • ${runtime}</div>
+                  <div class="movie-title">${movie.title}</div>
+                  <div class="movie-meta">${releaseYear} • ${runtime}</div>
                   
                   <div class="movie-rating-row">
                      <span style="color: #ffd700; font-size: 1.3rem;">${avgRating} ⭐</span> 
