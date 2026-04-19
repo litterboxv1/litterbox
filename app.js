@@ -77,7 +77,7 @@ try {
           const movieTitle = movie ? movie.title : "Unknown Movie";
           
           // Defaulting to klt for the feed display
-          const author = r.username ? r.username : "klt";
+          const author = "klt";
 
           const starCount = r.rating; 
           const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
