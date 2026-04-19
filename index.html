@@ -1,96 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>💩LitterBox Prototype</title>
+  <title>Movie App Prototype</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* X (Twitter) Dark Mode Color Palette */
     :root {
-      --primary: #1da1f2;
-      --bg: #e1e8ed;
-      --border: #ccc;
-      --text: #333;
-      --text-light: #666;
+      --primary: #1d9bf0;
+      --bg: #000000;
+      --bg-hover: #080808;
+      --border: #2f3336;
+      --text: #e7e9ea;
+      --text-light: #71767b;
+      --sidebar-bg: #16181c;
     }
+    
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); }
     h1, h2, h3 { margin: 0; }
     
-    /* Header */
-    header { background: white; border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-    .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-    nav ul { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
-    nav a { text-decoration: none; font-weight: bold; color: var(--text); padding: 5px 10px; border-radius: 20px; }
-    nav a.active { background: #d8efff; color: var(--primary); }
-    .search-bar { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); width: 250px; }
-
-    /* Layout */
-    .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    /* Center the 2-Column Layout */
+    .container { display: flex; justify-content: center; max-width: 1050px; margin: 0 auto; }
     
-    /* Global Elements */
-    .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* Feed & Posts */
-    .write-review-trigger { border: 2px solid var(--primary); background: #f0f8ff; display: flex; gap: 10px; align-items: center; cursor: pointer; }
-    .write-review-trigger input { flex-grow: 1; padding: 12px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; background: white; }
+    /* Main Feed Column */
+    main { width: 600px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); min-height: 100vh; }
     
-    .post { display: flex; gap: 12px; }
-    .avatar { width: 48px; height: 48px; background: #ccc; border-radius: 50%; flex-shrink: 0; }
+    /* Sticky Header */
+    .header-sticky { position: sticky; top: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(12px); z-index: 10; padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 20px; font-weight: bold;}
+    .header-tab { color: var(--text-light); cursor: pointer; padding-bottom: 10px; position: relative;}
+    .header-tab.active { color: var(--text); }
+    .header-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--primary); border-radius: 2px; }
+
+    /* Write Review Trigger (Mimicking "What's happening?") */
+    .write-review-trigger { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; cursor: pointer; transition: background 0.2s; }
+    .write-review-trigger:hover { background: var(--bg-hover); }
+    .write-input-mock { font-size: 1.2rem; color: var(--text-light); margin-top: 8px; margin-bottom: 12px; }
+    .post-btn-small { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 9999px; font-weight: bold; cursor: pointer; float: right; }
+
+    /* Feed Posts */
+    .post { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; transition: background 0.2s; cursor: pointer; }
+    .post:hover { background: var(--bg-hover); }
+    .avatar { width: 40px; height: 40px; background: #333; border-radius: 50%; flex-shrink: 0; }
     .post-content-area { flex-grow: 1; }
-    .post-header { margin-bottom: 8px; }
-    .username { font-weight: bold; color: var(--text-light); }
-    .movie-title-row { font-weight: bold; color: var(--primary); font-size: 1.1em; margin-top: 2px; }
-    .stars-inline { color: var(--text); }
-    .post-text { font-size: 1.05rem; margin-bottom: 12px; }
-    .post-metrics { background: #f5f8fa; padding: 8px 12px; border-radius: 6px; font-size: 0.9em; color: var(--text-light); display: flex; gap: 15px; }
+    .post-header { margin-bottom: 4px; }
+    .username { font-weight: bold; color: var(--text); }
+    .movie-title-row { color: var(--text-light); font-size: 0.95em; }
+    .movie-link { color: var(--primary); text-decoration: none; }
+    .movie-link:hover { text-decoration: underline; }
+    .stars-inline { color: #ffd700; font-size: 1.1em;}
+    .post-text { font-size: 15px; line-height: 1.4; color: var(--text); white-space: pre-wrap; word-break: break-word;}
+    .post-metrics { display: flex; gap: 24px; margin-top: 12px; color: var(--text-light); font-size: 13px; }
 
-    /* Sidebar */
-    .sidebar-section h3 { margin-bottom: 15px; font-size: 1.1rem; border-bottom: 2px solid var(--bg); padding-bottom: 5px;}
-    .posters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .poster-placeholder { aspect-ratio: 2/3; background: #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; text-align: center; padding: 5px; }
-    .leaderboard-tabs { display: flex; gap: 10px; margin-bottom: 15px; font-size: 0.85em; }
-    .leaderboard-tabs span { font-weight: bold; color: var(--text-light); cursor: pointer; }
-    .leaderboard-tabs .active { color: var(--primary); border-bottom: 2px solid var(--primary); }
-
-    /* Modal */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
-    .modal-content { background: white; width: 90%; max-width: 500px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .modal-close { font-size: 1.5rem; cursor: pointer; color: var(--text-light); background: none; border: none; }
+    /* Right Sidebar (Pinned) */
+    aside { width: 350px; padding-left: 30px; padding-top: 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; box-sizing: border-box; }
+    aside::-webkit-scrollbar { width: 0px; } /* Hide scrollbar for clean look */
     
-    #debug { background: #fee; color: #c00; padding: 10px; margin: 15px auto; max-width: 1000px; border-radius: 8px; font-family: monospace; display: none; }
+    .search-bar { width: 100%; background: #202327; border: none; padding: 14px 20px; border-radius: 9999px; color: var(--text); margin-bottom: 16px; font-size: 15px; outline: none; box-sizing: border-box; }
+    .search-bar:focus { background: transparent; border: 1px solid var(--primary); }
+    
+    .sidebar-section { background: var(--sidebar-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+    .sidebar-section h3 { margin: 0 0 16px 0; font-size: 1.2rem; font-weight: 800; }
+    
+    /* Posters Grid inside sidebar */
+    .posters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .poster-placeholder { aspect-ratio: 2/3; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; text-align: center; }
+
+    /* Leaderboard inside sidebar */
+    .leaderboard-tabs { display: flex; gap: 16px; margin-bottom: 16px; font-size: 0.95em; }
+    .leaderboard-tabs span { font-weight: bold; color: var(--text-light); cursor: pointer; }
+    .leaderboard-tabs .active { color: var(--text); }
+    
+    .leaderboard-item { display: flex; gap: 12px; margin-bottom: 16px; }
+    .leaderboard-item:last-child { margin-bottom: 0; }
+
+    /* Dark Mode Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 112, 131, 0.4); z-index: 200; justify-content: center; align-items: flex-start; padding-top: 50px; }
+    .modal-content { background: var(--bg); width: 100%; max-width: 600px; padding: 16px; border-radius: 16px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-close { font-size: 1.5rem; cursor: pointer; color: var(--text); background: none; border: none; }
+    
+    #new-movie-select { background: #202327; color: var(--text); border: none; padding: 14px; border-radius: 8px; width: 100%; font-size: 1rem; margin-bottom: 16px; outline: none; box-sizing: border-box;}
+    #input-new { background: var(--bg); color: var(--text); border: none; width: 100%; height: 120px; font-size: 1.2rem; resize: none; outline: none; margin-bottom: 16px; box-sizing: border-box;}
+    .modal-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; }
+    .btn-large { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 9999px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+    
+    #debug { background: #fee; color: #c00; padding: 10px; display: none; text-align: center;}
   </style>
 </head>
 <body>
-
-  <header>
-    <div class="logo">🎬 MovieApp</div>
-    <nav>
-      <ul>
-        <li><a href="#" class="active">HOME</a></li>
-        <li><a href="#">MOVIES</a></li>
-        <li><a href="#">PROFILE</a></li>
-      </ul>
-    </nav>
-    <input type="text" class="search-bar" placeholder="Search...">
-  </header>
 
   <div id="debug"></div>
 
   <div class="container">
     <main>
-      <div class="card write-review-trigger" onclick="openModal()">
-        <div style="font-weight: bold; color: #1da1f2; font-size: 1.1em;">Write a Review</div>
-        <input type="text" readonly placeholder="Search for a movie and start your review here...">
-        <button class="btn">POST</button>
+      <div class="header-sticky">
+        <div class="header-tab active">For you</div>
+        <div class="header-tab">Following</div>
+      </div>
+
+      <div class="write-review-trigger" onclick="openModal()">
+        <div class="avatar"></div>
+        <div style="flex-grow: 1;">
+          <div class="write-input-mock">What's happening?</div>
+          <div style="border-top: 1px solid var(--border); padding-top: 12px; overflow: hidden;">
+             <button class="post-btn-small">Post</button>
+          </div>
+        </div>
       </div>
 
       <div id="movies"></div>
     </main>
 
     <aside>
-      <div class="card sidebar-section">
-        <h3>RECENTLY WATCHED</h3>
+      <input type="text" class="search-bar" placeholder="Search">
+      
+      <div class="sidebar-section">
+        <h3>Recently Watched</h3>
         <div class="posters-grid">
           <div class="poster-placeholder" style="background: #8b0000;">Dune 2</div>
           <div class="poster-placeholder" style="background: #b8860b;">Furiosa</div>
@@ -98,30 +122,29 @@
         </div>
       </div>
 
-      <div class="card sidebar-section">
-        <h3>LEADERBOARD</h3>
+      <div class="sidebar-section">
+        <h3>Leaderboard</h3>
         <div class="leaderboard-tabs">
-          <span class="active">ABSOLUTE CINEMA</span>
+          <span class="active">Absolute Cinema</span>
           <span>Absolute shitpost</span>
         </div>
         
-        <div style="display: flex; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <div class="leaderboard-item">
           <div class="avatar" style="width: 32px; height: 32px;"></div>
           <div style="font-size: 0.85em;">
-            <b>@lft</b><br>
-            Project Hail Mary | ★★★★★<br>
-            I loved this movie!
+            <b style="color: var(--text);">@lft</b><br>
+            <span style="color: var(--text-light);">Project Hail Mary | </span><span style="color: #ffd700;">★★★★★</span><br>
+            <span style="color: var(--text);">I loved this movie!</span>
           </div>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div class="leaderboard-item">
           <div class="avatar" style="width: 32px; height: 32px;"></div>
           <div style="font-size: 0.85em;">
-            <b>@lft</b><br>
-            Thrash | ★☆☆☆☆<br>
-            LOL this was awful.
+            <b style="color: var(--text);">@lft</b><br>
+            <span style="color: var(--text-light);">Thrash | </span><span style="color: #ffd700;">★☆☆☆☆</span><br>
+            <span style="color: var(--text);">LOL this was awful.</span>
           </div>
         </div>
-
       </div>
     </aside>
   </div>
@@ -129,32 +152,34 @@
   <div class="modal-overlay" id="review-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 style="color: #1da1f2;">Write a Review</h2>
         <button class="modal-close" onclick="closeModal()">×</button>
+        <button id="post-btn-new" class="btn-large" onclick="addReview()">Post</button>
       </div>
       
-      <select id="new-movie-select" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;">
-          <option value="" disabled selected>Select a movie...</option>
-          </select>
-      
-      <div style="display: flex; gap: 12px; margin-bottom: 15px; align-items: center;">
-          <span style="font-weight: bold; color: #555;">Rating:</span>
-          <div id="star-rating-new" data-rating="0" style="display: flex; font-size: 2em; cursor: pointer; user-select: none;">
-              <span id="star-new-1" onclick="setRating('new', 1)" style="color: #ccc;">☆</span>
-              <span id="star-new-2" onclick="setRating('new', 2)" style="color: #ccc;">☆</span>
-              <span id="star-new-3" onclick="setRating('new', 3)" style="color: #ccc;">☆</span>
-              <span id="star-new-4" onclick="setRating('new', 4)" style="color: #ccc;">☆</span>
-              <span id="star-new-5" onclick="setRating('new', 5)" style="color: #ccc;">☆</span>
+      <div style="display: flex; gap: 12px;">
+        <div class="avatar"></div>
+        <div style="flex-grow: 1;">
+          <select id="new-movie-select">
+              <option value="" disabled selected>Select a movie...</option>
+              </select>
+          
+          <textarea id="input-new" maxlength="140" placeholder="Write your review here..."></textarea>
+          
+          <div class="modal-footer">
+            <div id="star-rating-new" data-rating="0" style="display: flex; font-size: 1.8em; cursor: pointer; user-select: none;">
+                <span id="star-new-1" onclick="setRating('new', 1)" style="color: #2f3336;">☆</span>
+                <span id="star-new-2" onclick="setRating('new', 2)" style="color: #2f3336;">☆</span>
+                <span id="star-new-3" onclick="setRating('new', 3)" style="color: #2f3336;">☆</span>
+                <span id="star-new-4" onclick="setRating('new', 4)" style="color: #2f3336;">☆</span>
+                <span id="star-new-5" onclick="setRating('new', 5)" style="color: #2f3336;">☆</span>
+            </div>
           </div>
+        </div>
       </div>
-
-      <textarea id="input-new" maxlength="140" placeholder="Write your review here (max 140 chars)..." style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: 6px; height: 100px; resize: none; font-size: 1rem; font-family: inherit; margin-bottom: 15px;"></textarea>
-
-      <button id="post-btn-new" class="btn" onclick="addReview()" style="width: 100%; padding: 12px; font-size: 1.1rem;">Post Review</button>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=19"></script>
 </body>
 </html>

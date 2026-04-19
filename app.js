@@ -54,7 +54,7 @@ try {
       // Reverse it so the newest posts are at the top
       ratedReviews.reverse().forEach(r => {
           const div = document.createElement("div");
-          div.className = "card post";
+          div.className = "post";
           
           const movie = movieData.results.find(m => m.id === r.movie_id);
           const movieTitle = movie ? movie.title : "Unknown Movie";
@@ -65,21 +65,19 @@ try {
           const starCount = r.rating; 
           const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
           
+          // X-style Post HTML Injection
           div.innerHTML = `
             <div class="avatar"></div>
             <div class="post-content-area">
               <div class="post-header">
-                <div class="username">@${author}</div>
-                <div class="movie-title-row">
-                  <a href="#">${movieTitle}</a> | <span class="stars-inline">${starsVisual}</span>
-                </div>
+                <span class="username">@${author}</span>
+                <span class="movie-title-row"> · <a href="#" class="movie-link">${movieTitle}</a> | <span class="stars-inline">${starsVisual}</span></span>
               </div>
               <div class="post-text">${r.content}</div>
               
               <div class="post-metrics">
-                <span>4.5 [★★★★★] Stars (average)</span>
-                <span>|</span>
-                <span>45 Replies</span>
+                <span>4.5 Avg [★★★★★]</span>
+                <span>💬 45</span>
               </div>
             </div>
           `;
@@ -102,10 +100,10 @@ try {
         const star = document.getElementById(`star-${prefix}-${i}`);
         if (i <= clickedRating) {
             star.innerText = "★";
-            star.style.color = "#1da1f2"; 
+            star.style.color = "#ffd700"; // Gold stars when selected
         } else {
             star.innerText = "☆";
-            star.style.color = "#ccc"; 
+            star.style.color = "#2f3336"; // Dark gray when empty
         }
     }
   };
@@ -148,20 +146,19 @@ try {
       postBtn.innerText = "Posting...";
       postBtn.style.opacity = "0.5";
 
-      // Save to Supabase (Username column removed per previous instructions)
+      // Save to Supabase
       const { error } = await supabaseClient
         .from("reviews")
         .insert([{ movie_id: movieId, content: text, rating: ratingValue}]);
 
       if (error) {
         postBtn.disabled = false;
-        postBtn.innerText = "Post Review";
+        postBtn.innerText = "Post";
         postBtn.style.opacity = "1";
         logError("Insert Error: " + error.message);
         return;
       }
 
-      // Close modal and refresh on success
       closeModal();
       window.location.reload(); 
     } catch(err) {
@@ -172,6 +169,3 @@ try {
 } catch(err) {
   logError("Initialization Error: " + err.message);
 }
-
-
-
