@@ -51,7 +51,7 @@
 
     /* Movie View Elements (TMDB Details) */
     .movie-header-card { background: #1a1d1f; padding: 24px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); }
-    .movie-poster { width: 140px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
+    .movie-poster { width: 180px; aspect-ratio: 2/3; flex-shrink: 0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
     .movie-info { flex-grow: 1; }
     .movie-title { font-size: 1.6rem; font-weight: bold; margin-bottom: 4px; }
     .movie-year { font-weight: normal; color: var(--text-light); }
@@ -64,7 +64,7 @@
     .crew-name { font-weight: bold; color: var(--text); }
     .crew-job { color: #888; }
     
-    .reviews-section-title { background: white; color: black; font-size: 2rem; font-weight: bold; padding: 12px 24px; border-bottom: 1px solid var(--border); }
+    .reviews-section-title { background: transparent; color: var(--text); font-size: 1.4rem; font-weight: 800; padding: 16px 24px; border-bottom: 1px solid var(--border); }
 
     /* Feed Posts */
     .post { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; transition: background 0.2s; cursor: pointer; }
