@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Movie App Prototype</title>
+  <title>LitterBox Prototype</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* X (Twitter) Dark Mode Color Palette */
@@ -17,6 +17,30 @@
     
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; background: var(--bg); color: var(--text); }
     h1, h2, h3 { margin: 0; }
+
+    /* New Global Header */
+    .global-header {
+      position: sticky;
+      top: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      box-sizing: border-box;
+    }
+    .header-nav { display: flex; align-items: center; gap: 32px; }
+    .header-logo { font-size: 1.5rem; font-weight: bold; color: var(--text); }
+    .header-links { display: flex; gap: 24px; }
+    .header-links a { color: var(--text-light); text-decoration: none; font-weight: bold; transition: color 0.2s;}
+    .header-links a.active, .header-links a:hover { color: var(--text); }
+
+    .search-bar { width: 300px; background: #202327; border: 1px solid transparent; padding: 10px 20px; border-radius: 9999px; color: var(--text); font-size: 15px; outline: none; transition: background 0.2s, border 0.2s; }
+    .search-bar:focus { background: transparent; border: 1px solid var(--primary); }
     
     /* Center the 2-Column Layout */
     .container { display: flex; justify-content: center; max-width: 1050px; margin: 0 auto; }
@@ -24,13 +48,25 @@
     /* Main Feed Column */
     main { width: 600px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); min-height: 100vh; }
     
-    /* Sticky Header */
-    .header-sticky { position: sticky; top: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(12px); z-index: 10; padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 20px; font-weight: bold;}
+    /* Sticky Tab Header (Offset by Global Header) */
+    .header-sticky { 
+      position: sticky; 
+      top: 60px; 
+      background: rgba(0,0,0,0.65); 
+      backdrop-filter: blur(12px); 
+      z-index: 10; 
+      padding: 12px 16px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      justify-content: center; /* Centered */
+      gap: 40px; 
+      font-weight: bold;
+    }
     .header-tab { color: var(--text-light); cursor: pointer; padding-bottom: 10px; position: relative;}
     .header-tab.active { color: var(--text); }
     .header-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--primary); border-radius: 2px; }
 
-    /* Write Review Trigger (Mimicking "What's happening?") */
+    /* Write Review Trigger */
     .write-review-trigger { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; cursor: pointer; transition: background 0.2s; }
     .write-review-trigger:hover { background: var(--bg-hover); }
     .write-input-mock { font-size: 1.2rem; color: var(--text-light); margin-top: 8px; margin-bottom: 12px; }
@@ -50,21 +86,34 @@
     .post-text { font-size: 15px; line-height: 1.4; color: var(--text); white-space: pre-wrap; word-break: break-word;}
     .post-metrics { display: flex; gap: 24px; margin-top: 12px; color: var(--text-light); font-size: 13px; }
 
-    /* Right Sidebar (Pinned) */
-    aside { width: 350px; padding-left: 30px; padding-top: 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; box-sizing: border-box; }
-    aside::-webkit-scrollbar { width: 0px; } /* Hide scrollbar for clean look */
-    
-    .search-bar { width: 100%; background: #202327; border: none; padding: 14px 20px; border-radius: 9999px; color: var(--text); margin-bottom: 16px; font-size: 15px; outline: none; box-sizing: border-box; }
-    .search-bar:focus { background: transparent; border: 1px solid var(--primary); }
+    /* Right Sidebar (Pinned & Stretching) */
+    aside { 
+      width: 350px; 
+      padding-left: 30px; 
+      padding-top: 20px; 
+      position: sticky; 
+      top: 60px; 
+      height: calc(100vh - 60px); /* Takes remaining height */
+      box-sizing: border-box; 
+      display: flex; 
+      flex-direction: column; 
+      padding-bottom: 20px; 
+    }
     
     .sidebar-section { background: var(--sidebar-bg); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
     .sidebar-section h3 { margin: 0 0 16px 0; font-size: 1.2rem; font-weight: 800; }
     
-    /* Posters Grid inside sidebar */
+    /* Stretches the Leaderboard block */
+    .leaderboard-section {
+      flex-grow: 1; 
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
     .posters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .poster-placeholder { aspect-ratio: 2/3; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; text-align: center; }
 
-    /* Leaderboard inside sidebar */
     .leaderboard-tabs { display: flex; gap: 16px; margin-bottom: 16px; font-size: 0.95em; }
     .leaderboard-tabs span { font-weight: bold; color: var(--text-light); cursor: pointer; }
     .leaderboard-tabs .active { color: var(--text); }
@@ -88,19 +137,34 @@
 </head>
 <body>
 
+  <header class="global-header">
+    <div class="header-nav">
+      <div class="header-logo">🎬 MovieApp</div>
+      <nav class="header-links">
+        <a href="#" class="active">Home</a>
+        <a href="#">Movies</a>
+        <a href="#">Profile</a>
+      </nav>
+    </div>
+    <div class="header-search">
+      <input type="text" class="search-bar" placeholder="Search">
+    </div>
+  </header>
+
   <div id="debug"></div>
 
   <div class="container">
     <main>
       <div class="header-sticky">
-        <div class="header-tab active">For you</div>
-        <div class="header-tab">Following</div>
+        <div class="header-tab active">Home</div>
+        <div class="header-tab">Movies</div>
+        <div class="header-tab">Profile</div>
       </div>
 
       <div class="write-review-trigger" onclick="openModal()">
         <div class="avatar"></div>
         <div style="flex-grow: 1;">
-          <div class="write-input-mock">What's happening?</div>
+          <div class="write-input-mock">Post a Review</div>
           <div style="border-top: 1px solid var(--border); padding-top: 12px; overflow: hidden;">
              <button class="post-btn-small">Post</button>
           </div>
@@ -111,8 +175,6 @@
     </main>
 
     <aside>
-      <input type="text" class="search-bar" placeholder="Search">
-      
       <div class="sidebar-section">
         <h3>Recently Watched</h3>
         <div class="posters-grid">
@@ -122,7 +184,7 @@
         </div>
       </div>
 
-      <div class="sidebar-section">
+      <div class="sidebar-section leaderboard-section">
         <h3>Leaderboard</h3>
         <div class="leaderboard-tabs">
           <span class="active">Absolute Cinema</span>
@@ -180,6 +242,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=19"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>
