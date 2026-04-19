@@ -7,7 +7,7 @@ function logError(message) {
 
 try {
   const SUPABASE_URL = "https://wdkrylqauvlahvbdzfh.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_Q6Rlx_PBj0yf-6fTyBGj6g_dZc-MfzQ";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indka3J5bHFhdXZsYWh2YnZkemZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1OTQ1NDMsImV4cCI6MjA5MjE3MDU0M30.4mRynrWCAwJPHuDclh2I7tevRAzvc4W9W7XV2Lwc8s4";
 
   // Initialize Supabase
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
