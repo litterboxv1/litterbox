@@ -210,3 +210,46 @@ try {
   };
 
 } catch(err) { logError("Init Error: " + err.message); }
+
+  // --- MOBILE TAB SWITCHING LOGIC ---
+  window.switchMobileTab = function(tabName, element) {
+    if (window.innerWidth > 768) return; // Ignore on desktop
+
+    // Update active tab styling
+    document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+    if (element) element.classList.add('active');
+
+    const mainEl = document.querySelector('main');
+    const asideEl = document.querySelector('aside');
+    const watchedEl = document.getElementById('mobile-watched-section');
+    const leaderEl = document.getElementById('mobile-leaderboard-section');
+
+    if (tabName === 'watched') {
+        mainEl.style.display = 'none';
+        asideEl.style.display = 'flex';
+        watchedEl.style.display = 'block';
+        leaderEl.style.display = 'none';
+    } else if (tabName === 'leaderboard') {
+        mainEl.style.display = 'none';
+        asideEl.style.display = 'flex';
+        watchedEl.style.display = 'none';
+        leaderEl.style.display = 'flex'; 
+    } else if (tabName === 'profile') {
+        mainEl.style.display = 'none';
+        asideEl.style.display = 'none';
+        alert("Profile view coming soon!"); // Placeholder
+    }
+  };
+
+  // Reset layout if the user rotates their iPad back to landscape/desktop mode
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      document.querySelector('main').style.display = 'block';
+      document.querySelector('aside').style.display = 'flex';
+      document.getElementById('mobile-watched-section').style.display = 'block';
+      document.getElementById('mobile-leaderboard-section').style.display = 'flex';
+    } else {
+      document.querySelector('aside').style.display = 'none';
+    }
+  });
+
