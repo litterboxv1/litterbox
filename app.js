@@ -58,7 +58,8 @@ try {
         </div>
 
         <div style="display: flex; gap: 8px;">
-            <input id="input-new" placeholder="Write a review..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+            <input id="input-new" maxlength="140" placeholder="Write a review (max 140 chars)..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+
             <button id="post-btn-new" onclick="addReview()" style="padding: 10px 18px; background: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold;">Post</button>
         </div>
       `;
@@ -141,6 +142,11 @@ try {
         return;
       }
 
+      if (text.length > 140) {
+        alert("Reviews must be 140 characters or less.");
+        return;
+      }
+
       // Disable button to prevent double-posting
       const postBtn = document.getElementById("post-btn-new");
       postBtn.disabled = true;
@@ -150,7 +156,7 @@ try {
       // Save to Supabase with hardcoded 'klt' username
       const { error } = await supabaseClient
         .from("reviews")
-        .insert([{ movie_id: movieId, content: text, rating: ratingValue, username: "klt" }]);
+        .insert([{ movie_id: movieId, content: text, rating: ratingValue}]);
 
       if (error) {
         postBtn.disabled = false;
