@@ -29,52 +29,65 @@ try {
       }
 
       const container = document.getElementById("movies");
+      container.innerHTML = ""; 
 
-      movieData.results.forEach(movie => {
-        const div = document.createElement("div");
-        div.className = "movie-card";
+      // 1. GLOBAL POST BOX 
+      let movieOptions = "";
+      movieData.results.forEach(m => {
+          movieOptions += `<option value="${m.id}">${m.title}</option>`;
+      });
+
+      const postBox = document.createElement("div");
+      postBox.className = "movie-card";
+      postBox.style.border = "2px solid #1da1f2"; 
+      postBox.innerHTML = `
+        <h3 style="margin-top: 0; color: #1da1f2;">Write a Review</h3>
+        <select id="new-movie-select" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; background: white;">
+            <option value="" disabled selected>Select a movie...</option>
+            ${movieOptions}
+        </select>
         
-        const movieReviews = allReviews ? allReviews.filter(r => r.movie_id === movie.id) : [];
-        
-        let reviewsHTML = "";
-        if (movieReviews.length > 0) {
-            movieReviews.forEach(r => {
-                const starCount = r.rating ? r.rating : 0; 
-                const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+        <div style="display: flex; gap: 12px; margin-bottom: 10px; align-items: center;">
+            <div id="star-rating-new" data-rating="0" style="display: flex; font-size: 1.8em; cursor: pointer; user-select: none;">
+                <span id="star-new-1" onclick="setRating('new', 1)" style="color: #ccc;">☆</span>
+                <span id="star-new-2" onclick="setRating('new', 2)" style="color: #ccc;">☆</span>
+                <span id="star-new-3" onclick="setRating('new', 3)" style="color: #ccc;">☆</span>
+                <span id="star-new-4" onclick="setRating('new', 4)" style="color: #ccc;">☆</span>
+                <span id="star-new-5" onclick="setRating('new', 5)" style="color: #ccc;">☆</span>
+            </div>
+        </div>
 
-                reviewsHTML += `
-                <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin: 10px 0;">
-                  <div style="font-size: 1.1em; margin-bottom: 4px; color: #1da1f2;">${starsVisual}</div>
-                  <div style="color: #333;">💬 ${r.content}</div>
-                </div>`;
-            });
-        } else {
-            reviewsHTML = `<em>No reviews yet. Be the first!</em>`;
-        }
+        <div style="display: flex; gap: 8px;">
+            <input id="input-new" placeholder="Write a review..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
+            <button id="post-btn-new" onclick="addReview()" style="padding: 10px 18px; background: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold;">Post</button>
+        </div>
+      `;
+      container.appendChild(postBox);
 
-        // Replaced the dropdown with the tap-based star container
-        div.innerHTML = `
-          <h3 style="margin-top: 0;">${movie.title}</h3>
+      // 2. THE FEED (Only showing posts with a rating >= 1)
+      const ratedReviews = allReviews ? allReviews.filter(r => r.rating && r.rating >= 1) : [];
+
+      // Reverse it so the newest posts are at the top
+      ratedReviews.reverse().forEach(r => {
+          const div = document.createElement("div");
+          div.className = "movie-card";
           
-          <div style="display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;">
-              
-              <div id="star-rating-${movie.id}" data-rating="0" style="display: flex; font-size: 1.8em; cursor: pointer; user-select: none;">
-                  <span id="star-${movie.id}-1" onclick="setRating(${movie.id}, 1)" style="color: #ccc;">☆</span>
-                  <span id="star-${movie.id}-2" onclick="setRating(${movie.id}, 2)" style="color: #ccc;">☆</span>
-                  <span id="star-${movie.id}-3" onclick="setRating(${movie.id}, 3)" style="color: #ccc;">☆</span>
-                  <span id="star-${movie.id}-4" onclick="setRating(${movie.id}, 4)" style="color: #ccc;">☆</span>
-                  <span id="star-${movie.id}-5" onclick="setRating(${movie.id}, 5)" style="color: #ccc;">☆</span>
-              </div>
+          const movie = movieData.results.find(m => m.id === r.movie_id);
+          const movieTitle = movie ? movie.title : "Unknown Movie";
+          
+          // Defaulting to klt for the feed display
+          const author = r.username ? r.username : "klt";
 
-              <input id="input-${movie.id}" placeholder="Write a review..." style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" />
-              <button onclick="addReview(${movie.id})" style="padding: 10px 18px; background: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold;">Post</button>
-          </div>
-
-          <div id="reviews-${movie.id}" style="font-size: 0.9em;">
-             ${reviewsHTML}
-          </div>
-        `;
-        container.appendChild(div);
+          const starCount = r.rating; 
+          const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+          
+          div.innerHTML = `
+            <div style="font-weight: bold; color: #555; margin-bottom: 2px;">@${author}</div>
+            <div style="font-size: 0.85em; color: #888; margin-bottom: 8px; font-weight: bold;">🎬 ${movieTitle}</div>
+            <div style="font-size: 1.1em; margin-bottom: 4px; color: #1da1f2;">${starsVisual}</div>
+            <div style="color: #333; font-size: 1.05em;">💬 ${r.content}</div>
+          `;
+          container.appendChild(div);
       });
       
     } catch(err) {
@@ -84,33 +97,39 @@ try {
 
   initializeFeed();
 
-  // New Global Function: Handles the tapping of stars
-  window.setRating = function(movieId, clickedRating) {
-    // Save the number to the hidden data attribute
-    const container = document.getElementById(`star-rating-${movieId}`);
+  // Handle star tapping
+  window.setRating = function(prefix, clickedRating) {
+    const container = document.getElementById(`star-rating-${prefix}`);
     container.setAttribute("data-rating", clickedRating);
 
-    // Visually fill in the correct number of stars
     for (let i = 1; i <= 5; i++) {
-        const star = document.getElementById(`star-${movieId}-${i}`);
+        const star = document.getElementById(`star-${prefix}-${i}`);
         if (i <= clickedRating) {
             star.innerText = "★";
-            star.style.color = "#1da1f2"; // Highlight color
+            star.style.color = "#1da1f2"; 
         } else {
             star.innerText = "☆";
-            star.style.color = "#ccc"; // Empty color
+            star.style.color = "#ccc"; 
         }
     }
   };
 
-  window.addReview = async function(movieId) {
+  // Add the review
+  window.addReview = async function() {
     try {
-      const input = document.getElementById(`input-${movieId}`);
+      const selectBox = document.getElementById("new-movie-select");
+      const movieId = selectBox.value;
+      
+      const input = document.getElementById("input-new");
       const text = input.value;
       
-      // Grab the star value from the hidden attribute
-      const ratingContainer = document.getElementById(`star-rating-${movieId}`);
+      const ratingContainer = document.getElementById("star-rating-new");
       const ratingValue = parseInt(ratingContainer.getAttribute("data-rating"));
+
+      if (!movieId) {
+        alert("Please select a movie from the dropdown!");
+        return;
+      }
 
       if (ratingValue === 0) {
         alert("Please tap the stars to leave a rating!");
@@ -122,11 +141,21 @@ try {
         return;
       }
 
+      // Disable button to prevent double-posting
+      const postBtn = document.getElementById("post-btn-new");
+      postBtn.disabled = true;
+      postBtn.innerText = "Posting...";
+      postBtn.style.opacity = "0.5";
+
+      // Save to Supabase with hardcoded 'klt' username
       const { error } = await supabaseClient
         .from("reviews")
-        .insert([{ movie_id: movieId, content: text, rating: ratingValue }]);
+        .insert([{ movie_id: movieId, content: text, rating: ratingValue, username: "klt" }]);
 
       if (error) {
+        postBtn.disabled = false;
+        postBtn.innerText = "Post";
+        postBtn.style.opacity = "1";
         logError("Insert Error: " + error.message);
         return;
       }
@@ -140,3 +169,5 @@ try {
 } catch(err) {
   logError("Initialization Error: " + err.message);
 }
+
+
