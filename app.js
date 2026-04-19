@@ -65,19 +65,24 @@ try {
           const starCount = r.rating; 
           const starsVisual = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
           
-          // X-style Post HTML Injection
+          // X-style Post HTML Injection with specific metric adjustments
           div.innerHTML = `
             <div class="avatar"></div>
             <div class="post-content-area">
               <div class="post-header">
-                <span class="username">@${author}</span>
-                <span class="movie-title-row"> · <a href="#" class="movie-link">${movieTitle}</a> | <span class="stars-inline">${starsVisual}</span></span>
+                <div class="username">@${author}</div>
+                <div class="movie-title-row" style="margin-top: 4px;">
+                  <a href="#" class="movie-link">${movieTitle}</a> | <span class="stars-inline">${starsVisual}</span>
+                </div>
               </div>
-              <div class="post-text">${r.content}</div>
+              <div class="post-text" style="margin-top: 8px;">${r.content}</div>
               
-              <div class="post-metrics">
-                <span>4.5 Avg [★★★★★]</span>
-                <span>💬 45</span>
+              <div class="post-metrics" style="margin-top: 14px;">
+                <span style="display: flex; gap: 16px; align-items: center; font-size: 14px; font-weight: bold; color: var(--text-light);">
+                  <span>4.5 ⭐</span>
+                  <span>3.8 💩</span>
+                  <span>45 💬</span>
+                </span>
               </div>
             </div>
           `;
