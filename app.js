@@ -76,7 +76,7 @@ try {
               <div class="post-text" style="margin-top: 8px;">${r.content}</div>
               <div class="post-metrics" style="margin-top: 14px;">
                 <span style="display: flex; gap: 16px; align-items: center; font-size: 14px; font-weight: bold; color: var(--text-light);">
-                  <span>4.5 ⭐</span><span>3.8 💩</span><span>45 💬</span>
+                  <span>4.5K ⭐</span><span>3.8K 💩</span><span>45 💬</span>
                 </span>
               </div>
             </div>
