@@ -140,13 +140,11 @@
   <header class="global-header">
     <div class="header-nav">
       <div class="header-logo">🎬 MovieApp</div>
-      <div class="container">
-    <main>
-      <div class="header-sticky">
-        <div class="header-tab active">Home</div>
-        <div class="header-tab">Movies</div>
-        <div class="header-tab">Profile</div>
-      </div>
+      <nav class="header-links">
+        <a href="#" class="active">Home</a>
+        <a href="#">Movies</a>
+        <a href="#">Profile</a>
+      </nav>
     </div>
     <div class="header-search">
       <input type="text" class="search-bar" placeholder="Search">
@@ -154,6 +152,14 @@
   </header>
 
   <div id="debug"></div>
+
+  <div class="container">
+    <main>
+      <div class="header-sticky">
+        <div class="header-tab active">Home</div>
+        <div class="header-tab">Movies</div>
+        <div class="header-tab">Profile</div>
+      </div>
 
       <div class="write-review-trigger" onclick="openModal()">
         <div class="avatar"></div>
